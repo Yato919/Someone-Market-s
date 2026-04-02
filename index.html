@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yato Eran Store</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-color: #007aff;
+            --light-blue: #e3f2fd;
+            --bg-color: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.85);
+            --text-color: #333;
+        }
+
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-color: #1c1c1e;
+                --card-bg: rgba(28, 28, 30, 0.85);
+                --text-color: #ffffff;
+                --light-blue: #2c3e50;
+            }
+            body { color: white; }
+            header { background-color: #1c1c1e !important; }
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        header {
+            background-color: white;
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            height: 60px;
+        }
+
+        .back-btn {
+            display: none;
+            margin-right: 15px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            color: var(--primary-color);
+        }
+
+        .brand-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            margin-right: 12px;
+            overflow: hidden;
+        }
+
+        .brand-icon img { width: 100%; height: 100%; object-fit: cover; }
+        .brand-name { font-size: 1.1rem; font-weight: 700; color: var(--text-color); }
+
+        .main-content {
+            padding: 15px;
+            height: calc(100vh - 145px);
+            overflow-y: auto;
+            padding-bottom: 80px;
+        }
+
+        .tab-content, .detail-page {
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .active { display: block; }
+
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+
+        /* Home Main Cards */
+        .grid-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+            backdrop-filter: blur(15px);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .grid-card:active { transform: scale(0.97); }
+
+        .card-icon { width: 45px; height: 45px; border-radius: 12px; overflow: hidden; }
+        .card-icon img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Item Grid */
+        .blox-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
+        .blox-item {
+            background: var(--card-bg);
+            border-radius: 18px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .blox-item img { width: 100%; height: 100px; object-fit: cover; border-radius: 12px; margin-bottom: 10px; }
+        .blox-item h4 { font-size: 0.75rem; margin-bottom: 5px; line-height: 1.2; }
+        .price-list-tag { background: var(--primary-color); color: white; font-size: 0.7rem; font-weight: 700; padding: 6px; border-radius: 8px; display: block; }
+
+        /* Profile Owner Card */
+        .owner-card {
+            background-color: #e3f2fd;
+            padding: 15px;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            border: 1px solid #bbdefb;
+            margin-top: 10px;
+            transition: transform 0.2s;
+        }
+        .owner-card:active { transform: scale(0.95); }
+        .owner-card img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; }
+        .owner-card span { font-weight: 700; color: #1976d2; font-size: 0.9rem; }
+
+        /* Payment Row Style */
+        .payment-list { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .payment-row {
+            background: var(--card-bg);
+            padding: 12px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        .payment-info { display: flex; align-items: center; gap: 12px; }
+        .payment-info img { width: 35px; height: 35px; border-radius: 8px; object-fit: cover; }
+        .phone-no { font-size: 0.8rem; font-weight: 600; }
+        .copy-btn {
+            background: var(--primary-color);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        /* Large Upload Area */
+        .upload-area {
+            margin-top: 25px;
+            background: var(--card-bg);
+            border: 2px dashed #ccc;
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+        }
+        .upload-area img { width: 60px; height: 60px; border-radius: 12px; margin-bottom: 10px; }
+        .upload-area p { font-size: 0.9rem; font-weight: 600; opacity: 0.8; }
+
+        /* Bottom Nav */
+        .bottom-nav-container { position: fixed; bottom: 25px; left: 0; right: 0; display: flex; justify-content: center; padding: 0 20px; z-index: 1000; }
+        .nav-bar { background-color: var(--card-bg); backdrop-filter: blur(25px); display: flex; width: 100%; max-width: 400px; height: 65px; border-radius: 30px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); border: 1px solid rgba(255,255,255,0.1); }
+        .nav-item { 
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; 
+            color: #8e8e93; text-decoration: none; transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            position: relative;
+        }
+        .nav-item.active { color: var(--primary-color); transform: translateY(-8px) scale(1.2); }
+        .nav-item i { font-size: 1.2rem; margin-bottom: 2px; }
+        .nav-item span { font-size: 0.65rem; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="back-btn" id="back-btn" onclick="goBack()"><i class="fas fa-chevron-left"></i></div>
+        <div class="brand-icon" id="header-icon"><img src="https://i.ibb.co/qFxQYHqj/IMG-20260331-224818-487.jpg"></div>
+        <div class="brand-name" id="header-title">Yato Eran Store</div>
+    </header>
+
+    <div class="main-content">
+        <div id="home" class="tab-content active">
+            <div class="grid-card" onclick="openSubPage('blox-detail', 'Blox Fruit Random')">
+                <div class="card-icon"><img src="https://i.ibb.co/Ps4kF70m/3df966086cc3ba57cdd3ac50bb071bd3.jpg"></div>
+                <div class="card-info"><h3>Blox Fruit Random</h3><p>Accounts & Items</p></div>
+            </div>
+            <div class="grid-card" onclick="openSubPage('pubg-detail', 'PUBG UC')">
+                <div class="card-icon"><img src="https://i.ibb.co/nN5f3bX5/516a74d6d701c86c007f668d7cf2891a.jpg"></div>
+                <div class="card-info"><h3>PUBG UC</h3><p>Instant Top-up</p></div>
+            </div>
+            <div class="grid-card" onclick="openSubPage('mlbb-detail', 'MLBB Diamonds')">
+                <div class="card-icon"><img src="https://i.ibb.co/W4yLN6tk/dcc778e5afc9beac27a7541153e294f2.jpg"></div>
+                <div class="card-info"><h3>MLBB Dia</h3><p>Diamonds Top-up</p></div>
+            </div>
+        </div>
+
+        <div id="blox-detail" class="detail-page">
+            <div class="blox-grid">
+                <div class="blox-item" onclick="openCheckout('Kit Store + God + Lv Max')">
+                    <img src="https://i.ibb.co/FbYp6r70/050285d14927d96b6fa5b815cc5a5cd6.jpg">
+                    <h4>Kit Store + God + Lv Max</h4><div class="price-list-tag">10,000Ks</div>
+                </div>
+                <div class="blox-item" onclick="openCheckout('Tiger Store + God + Lv Max')">
+                    <img src="https://i.ibb.co/F4CLtDKn/0ee0390f48ce5b5663d7aa991193c2b8.jpg">
+                    <h4>Tiger Store + God + Lv Max</h4><div class="price-list-tag">3,300Ks</div>
+                </div>
+                <div class="blox-item" onclick="openCheckout('Yeti Store + God + Lv Max')">
+                    <img src="https://i.ibb.co/Vcn3FBkS/e9e99a3954a457a3f7649d1ff5939bc1.jpg">
+                    <h4>Yeti Store + God + Lv Max</h4><div class="price-list-tag">3,300Ks</div>
+                </div>
+                <div class="blox-item" onclick="openCheckout('1-3 Mythical + God + Lv Max')">
+                    <img src="https://i.ibb.co/YrhRzc7/IMG-20260401-010048-103.jpg">
+                    <h4>1-3 Mythical + God + Lv Max</h4><div class="price-list-tag">1,000Ks</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="pubg-detail" class="detail-page">
+            <div class="blox-grid">
+                <div class="blox-item" onclick="openCheckout('PUBG 60 UC')">
+                    <img src="https://i.ibb.co/nN5f3bX5/516a74d6d701c86c007f668d7cf2891a.jpg">
+                    <h4>60 UC</h4><div class="price-list-tag">3,500Ks</div>
+                </div>
+                <div class="blox-item" onclick="openCheckout('PUBG 325 UC')">
+                    <img src="https://i.ibb.co/nN5f3bX5/516a74d6d701c86c007f668d7cf2891a.jpg">
+                    <h4>325 UC</h4><div class="price-list-tag">18,000Ks</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="mlbb-detail" class="detail-page">
+            <div class="blox-grid">
+                <div class="blox-item" onclick="openCheckout('MLBB 86 Diamonds')">
+                    <img src="https://i.ibb.co/W4yLN6tk/dcc778e5afc9beac27a7541153e294f2.jpg">
+                    <h4>86 Diamonds</h4><div class="price-list-tag">2,500Ks</div>
+                </div>
+                <div class="blox-item" onclick="openCheckout('MLBB 172 Diamonds')">
+                    <img src="https://i.ibb.co/W4yLN6tk/dcc778e5afc9beac27a7541153e294f2.jpg">
+                    <h4>172 Diamonds</h4><div class="price-list-tag">5,000Ks</div>
+                </div>
+            </div>
+        </div>
+
+        <div id="checkout-view" class="detail-page">
+            <h3 style="text-align: center; margin-bottom: 20px;">ငွေပေးချေရန်</h3>
+            <div class="payment-list">
+                <div class="payment-row">
+                    <div class="payment-info">
+                        <img src="https://i.ibb.co/YB2VZ51D/ab76bb0483ac7c445251c650cc7c1227.jpg">
+                        <span class="phone-no">09967757554 [W.W.M]</span>
+                    </div>
+                    <div class="copy-btn" onclick="copyText('09967757554')">Copy</div>
+                </div>
+                <div class="payment-row">
+                    <div class="payment-info">
+                        <img src="https://i.ibb.co/qFnTqGfj/9a1ddf812ac383f246e7e41e485ca11f.jpg">
+                        <span class="phone-no">09254723575 [W.W.M]</span>
+                    </div>
+                    <div class="copy-btn" onclick="copyText('09254723575')">Copy</div>
+                </div>
+                <div class="payment-row">
+                    <div class="payment-info">
+                        <img src="https://i.ibb.co/nM8p55X8/32c869493c68ebbc60f5477cdc6a4796.jpg">
+                        <span class="phone-no">09254723575 [W.W.M]</span>
+                    </div>
+                    <div class="copy-btn" onclick="copyText('09254723575')">Copy</div>
+                </div>
+            </div>
+            <input type="file" id="gallery-input" style="display: none;" accept="image/*">
+            <div class="upload-area" onclick="document.getElementById('gallery-input').click()">
+                <img src="https://i.ibb.co/39ZM7kDV/ae3fc0a9ed8e7f4edb630e7492ee22bd.jpg">
+                <p>ပြေစာပုံ ပို့ရန်</p>
+            </div>
+            <button id="confirm-btn" onclick="confirmOrder()" style="width:100%; margin-top:20px; padding:15px; border-radius:15px; border:none; background:var(--primary-color); color:white; font-weight:bold;">Confirm Order</button>
+        </div>
+
+        <div id="order" class="tab-content"><div class="grid-card"><h3>Order History အချက်အလက် မရှိသေးပါ။</h3></div></div>
+        
+        <div id="profile" class="tab-content">
+            <h3>Profile Setting</h3>
+            <div class="owner-card" onclick="window.location.href='https://t.me/Yato_299'">
+                <img src="https://i.ibb.co/mY648ct/fab302cda95e16351c1a793b26f34907.jpg">
+                <span>Owner Official Account</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="bottom-nav-container" id="nav-container">
+        <nav class="nav-bar">
+            <a href="#" class="nav-item" data-tab="order" onclick="switchTab(this, 'order')"><i class="fas fa-shopping-bag"></i><span>Order</span></a>
+            <a href="#" class="nav-item active" data-tab="home" onclick="switchTab(this, 'home')"><i class="fas fa-home"></i><span>Home</span></a>
+            <a href="#" class="nav-item" data-tab="profile" onclick="switchTab(this, 'profile')"><i class="fas fa-user"></i><span>Profile</span></a>
+        </nav>
+    </div>
+
+    <script>
+        let lastPage = 'home';
+        let currentItem = ''; // Customer ရွေးထားတဲ့ ပစ္စည်းအမည် သိမ်းရန်
+
+        // Telegram Bot အချက်အလက်များ
+        const BOT_TOKEN = "8628101044:AAHBDlJsn5Lx_-4PGv97M-dyNhxM1AZew0M";
+        const CHAT_ID = "5109307196";
+
+        function switchTab(element, tabId) {
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+            document.querySelectorAll('.tab-content, .detail-page').forEach(el => el.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            
+            document.getElementById('header-title').innerText = tabId === 'home' ? "Yato Eran Store" : tabId.toUpperCase();
+            document.getElementById('header-icon').style.display = "flex";
+            document.getElementById('back-btn').style.display = "none";
+            document.getElementById('nav-container').style.display = "flex";
+            lastPage = 'home';
+        }
+
+        function openSubPage(pageId, title) {
+            document.querySelectorAll('.tab-content, .detail-page').forEach(el => el.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+            document.getElementById('header-title').innerText = title;
+            document.getElementById('header-icon').style.display = "none";
+            document.getElementById('back-btn').style.display = "block";
+            lastPage = pageId;
+        }
+
+        function openCheckout(itemTitle) {
+            currentItem = itemTitle; // ရွေးလိုက်တဲ့ ပစ္စည်းကို မှတ်ထားမယ်
+            document.querySelectorAll('.detail-page').forEach(el => el.classList.remove('active'));
+            document.getElementById('checkout-view').classList.add('active');
+            document.getElementById('header-title').innerText = itemTitle;
+            document.getElementById('back-btn').style.display = "block";
+            document.getElementById('nav-container').style.display = "none";
+        }
+
+        async function confirmOrder() {
+            const photoInput = document.getElementById('gallery-input');
+            const confirmBtn = document.getElementById('confirm-btn');
+
+            if (photoInput.files.length === 0) {
+                alert("ကျေးဇူးပြု၍ ငွေလွှဲပြေစာပုံ အရင်တင်ပေးပါ။");
+                return;
+            }
+
+            confirmBtn.disabled = true;
+            confirmBtn.innerText = "Sending...";
+
+            const formData = new FormData();
+            formData.append('chat_id', CHAT_ID);
+            formData.append('photo', photoInput.files[0]);
+            formData.append('caption', `🛒 *အော်ဒါအသစ် ရောက်ရှိလာပါပြီ*\n\n🔹 ပစ္စည်း: ${currentItem}\n⏰ အချိန်: ${new Date().toLocaleString()}\n\nပြေစာကို အပေါ်မှာ စစ်ဆေးပေးပါ။`);
+            formData.append('parse_mode', 'Markdown');
+
+            try {
+                const response = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendPhoto`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    alert("Order တင်ခြင်း အောင်မြင်ပါသည်။ ခဏအတွင်း ဆက်သွယ်ပေးပါမည်။");
+                    goBack();
+                } else {
+                    alert("အမှားအယွင်း တစ်ခုရှိနေပါသည်။ နောက်မှ ပြန်ကြိုးစားကြည့်ပါ။");
+                }
+            } catch (error) {
+                alert("Connection အဆင်မပြေဖြစ်နေပါသည်။");
+                console.error(error);
+            } finally {
+                confirmBtn.disabled = false;
+                confirmBtn.innerText = "Confirm Order";
+            }
+        }
+
+        function copyText(text) {
+            navigator.clipboard.writeText(text);
+            alert("Copied: " + text);
+        }
+
+        function goBack() {
+            if (document.getElementById('checkout-view').classList.contains('active')) {
+                document.querySelectorAll('.detail-page').forEach(el => el.classList.remove('active'));
+                document.getElementById(lastPage).classList.add('active');
+                document.getElementById('nav-container').style.display = "flex";
+            } else {
+                switchTab(document.querySelector('[data-tab="home"]'), 'home');
+            }
+        }
+    </script>
+</body>
+</html>
